@@ -5,6 +5,7 @@ import multiprocessing as mp
 import requests
 from bs4 import BeautifulSoup as bs
 import os
+from tqdm import tqdm
 
 def check_log():
 	if os.path.exists("log"):
@@ -51,7 +52,7 @@ def create_folder(x):
 
 def worker(url,name):
 	x=requests.get(url)
-	soup=bs(x.content)
+	soup=bs(x.content,"lxml")
 	y=soup.find(id="imgholder")
 	z=y.img.get("src")
 	image=requests.get(z)
@@ -82,7 +83,7 @@ def main():
 	end=int(raw_input("Enter the last chapter number : "))
 	chapters=range(start,end)
 	pages=range(1,100)
-	for chapter in chapters:
+	for chapter in tqdm(chapters):
 		update_log(chapter)
 		if os.path.exists(str(chapter)):
 			os.chdir(str(chapter))
@@ -103,7 +104,7 @@ def main():
 				print "Chapter Done..!"
 				os.chdir("..")
 				break
-				
+
 	print "All Done"
 	os.chdir("..")
 if __name__ == "__main__":
